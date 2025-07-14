@@ -27,7 +27,7 @@
 	}
 
 	h1 {
-		color: var(--color-blue-light);
+		color: var(--color-green-light);
 		--color-text-outline: var(--color-fg);
 		--stroke-width: 2px;
 		letter-spacing: 0.0325em;

@@ -1,14 +1,155 @@
-animal,total_count,she_count,proportion_female,title,author,pub_date,num_ratings,book_count,emoji
-bird,24,15,0.625,Are You My Mother?,P.D. Eastman,"June 12, 1960",245845,16,🐦
-duck,14,8,0.5714285714285714,"Brown Bear, Brown Bear, What Do You See?",Bill Martin Jr.,"January 1, 1967",184033,11,🦆
-cat,35,19,0.5428571428571428,"The Cat in the Hat (The Cat in the Hat, #1)",Dr. Seuss,"March 12, 1957",551237,29,🐱
-pig,33,14,0.42424242424242425,The True Story of the 3 Little Pigs,Jon Scieszka,"October 1, 1989",192544,16,🐷
-mouse,55,22,0.4,Green Eggs and Ham,Dr. Seuss,"August 12, 1960",792341,28,🐭
-rabbit,62,18,0.2903225806451613,Goodnight Moon,Margaret Wise Brown,"September 3, 1947",379039,33,🐇
-bear,50,14,0.28,"Winnie-the-Pooh (Winnie-the-Pooh, #1)",A.A. Milne,"October 14, 1926",377881,32,🐻
-monkey,14,3,0.21428571428571427,Curious George,H.A. Rey,"January 1, 1941",137375,10,🐒
-dog,33,7,0.21212121212121213,How the Grinch Stole Christmas!,Dr. Seuss,"October 12, 1957",420953,27,🐶
-elephant,16,3,0.1875,Horton Hears a Who!,Dr. Seuss,"January 1, 1954",110590,11,🐘
-fox,18,2,0.1111111111111111,The Little Prince,Antoine de Saint-Exupéry,"April 6, 1943",2177997,18,🦊
-wolf,10,1,0.1,The True Story of the 3 Little Pigs,Jon Scieszka,"October 1, 1989",192544,10,🐺
-frog,15,1,0.06666666666666667,"Brown Bear, Brown Bear, What Do You See?",Bill Martin Jr.,"January 1, 1967",184033,13,🐸
+animal,Translation,Language,Gender,Name_with_Article,proportion_female,id
+bird,bird,English,Non-Gendered,bird,62.50
+bird,oiseau,French,Masculine,le oiseau,0
+bird,pájaro,Spanish,Masculine,el pájaro,0
+bird,uccello,Italian,Masculine,il uccello,0
+bird,Vogel,German,Masculine,der Vogel,0
+bird,pássaro,Portuguese,Masculine,o pássaro,0
+bird,птица,Russian,Feminine,-,100
+bird,طائر,Arabic,Masculine,ال طائر,0
+bird,पक्षी,Hindi,Masculine,-,0
+bird,ptak,Polish,Masculine,ptak,0
+bird,πουλί,Greek,Neuter,το πουλί,50
+duck,duck,English,Non-Gendered,duck,57.14
+duck,canard,French,Varies,le/la canard/cane,50
+duck,pato,Spanish,Varies,el/la pato/pata,50
+duck,anatra,Italian,Feminine,la anatra,100
+duck,Ente,German,Feminine,die Ente,100
+duck,pato,Portuguese,Varies,o/a pato/pata,50
+duck,утка,Russian,Feminine,-,100
+duck,بطة,Arabic,Feminine,ال بطة,100
+duck,बत्तख,Hindi,Feminine,-,100
+duck,kaczka,Polish,Feminine,kaczka,100
+duck,πάπια,Greek,Feminine,η πάπια,100
+cat,cat,English,Non-Gendered,cat,54.29
+cat,chat,French,Varies,le/la chat/chatte,50
+cat,gato,Spanish,Varies,el/la gato/gata,50
+cat,gatto,Italian,Varies,il/la gatto/gatta,50
+cat,Katze,German,Feminine,die Katze,100
+cat,gato,Portuguese,Varies,o/a gato/gata,50
+cat,кот,Russian,Masculine,-,0
+cat,قطة,Arabic,Feminine,ال قطة,100
+cat,बिल्ली,Hindi,Feminine,-,100
+cat,kot,Polish,Masculine,kot,0
+cat,γάτα,Greek,Feminine,η γάτα,100
+pig,pig,English,Non-Gendered,pig,42.42
+pig,cochon,French,Varies,le/la cochon/truie,50
+pig,cerdo,Spanish,Varies,el/la cerdo/cerda,50
+pig,maiale,Italian,Varies,il/la maiale/scrofa,50
+pig,Schwein,German,Neuter,das Schwein,50
+pig,porco,Portuguese,Varies,o/a porco/porca,50
+pig,свинья,Russian,Feminine,-,100
+pig,خنزير,Arabic,Masculine,ال خنزير,0
+pig,सूअर,Hindi,Masculine,-,0
+pig,świnia,Polish,Feminine,świnia,100
+pig,γουρούνι,Greek,Neuter,το γουρούνι,50
+mouse,mouse,English,Non-Gendered,mouse,40.00
+mouse,souris,French,Feminine,la souris,100
+mouse,ratón,Spanish,Varies,el/la ratón/ratona,50
+mouse,topo,Italian,Varies,il/la topo/topa,50
+mouse,Maus,German,Feminine,die Maus,100
+mouse,camundongo,Portuguese,Varies,o/a camundongo/camundonga,50
+mouse,мышь,Russian,Feminine,-,100
+mouse,فأر,Arabic,Masculine,ال فأر,0
+mouse,चूहा,Hindi,Masculine,-,0
+mouse,mysz,Polish,Feminine,mysz,100
+mouse,ποντίκι,Greek,Neuter,το ποντίκι,50
+rabbit,rabbit,English,Non-Gendered,rabbit,29.03
+rabbit,lapin,French,Varies,le/la lapin/lapine,50
+rabbit,conejo,Spanish,Varies,el/la conejo/coneja,50
+rabbit,coniglio,Italian,Varies,il/la coniglio/coniglia,50
+rabbit,Kaninchen,German,Neuter,das Kaninchen,50
+rabbit,coelho,Portuguese,Varies,o/a coelho/coelha,50
+rabbit,кролик,Russian,Masculine,-,0
+rabbit,أرنب,Arabic,Masculine,ال أرنب,0
+rabbit,खरगोश,Hindi,Masculine,-,0
+rabbit,królik,Polish,Masculine,królik,0
+rabbit,κουνέλι,Greek,Neuter,το κουνέλι,50
+bear,bear,English,Non-Gendered,bear,28.00
+bear,ours,French,Varies,l'/la ours/ourse,50
+bear,oso,Spanish,Varies,el/la oso/osa,50
+bear,orso,Italian,Varies,l'/la orso/orsa,50
+bear,Bär,German,Varies,der/die Bär/Bärin,50
+bear,urso,Portuguese,Varies,o/a urso/ursa,50
+bear,медведь,Russian,Masculine,-,0
+bear,دب,Arabic,Masculine,ال دب,0
+bear,भालू,Hindi,Masculine,-,0
+bear,niedźwiedź,Polish,Varies,niedźwiedź/niedźwiedzica,50
+bear,αρκούδα,Greek,Feminine,η αρκούδα,100
+monkey,monkey,English,Non-Gendered,monkey,21.43
+monkey,singe,French,Varies,le/la singe/singe femelle,50
+monkey,mono,Spanish,Varies,el/la mono/mona,50
+monkey,scimmia,Italian,Feminine,la scimmia,100
+monkey,Affe,German,Varies,der/die Affe/Äffin,50
+monkey,macaco,Portuguese,Varies,o/a macaco/macaca,50
+monkey,обезьяна,Russian,Feminine,-,100
+monkey,قرد,Arabic,Masculine,ال قرد,0
+monkey,बंदर,Hindi,Masculine,-,0
+monkey,małpa,Polish,Feminine,małpa,100
+monkey,πίθηκος,Greek,Masculine,ο πίθηκος,0
+dog,dog,English,Non-Gendered,dog,21.21
+dog,chien,French,Varies,le/la chien/chienne,50
+dog,perro,Spanish,Varies,el/la perro/perra,50
+dog,cane,Italian,Varies,il/la cane/cagna,50
+dog,Hund,German,Varies,der/die Hund/Hündin,50
+dog,cão,Portuguese,Varies,o/a cão/cadela,50
+dog,собака,Russian,Feminine,-,100
+dog,كلب,Arabic,Masculine,ال كلب,0
+dog,कुत्ता,Hindi,Masculine,-,0
+dog,pies,Polish,Varies,pies/suka,50
+dog,σκύλος,Greek,Masculine,ο σκύλος,0
+elephant,elephant,English,Non-Gendered,elephant,18.75
+elephant,éléphant,French,Masculine,l' éléphant,0
+elephant,elefante,Spanish,Masculine,el elefante,0
+elephant,elefante,Italian,Masculine,il elefante,0
+elephant,Elefant,German,Masculine,der Elefant,0
+elephant,elefante,Portuguese,Masculine,o elefante,0
+elephant,слон,Russian,Masculine,-,0
+elephant,فيل,Arabic,Masculine,ال فيل,0
+elephant,हाथी,Hindi,Masculine,-,0
+elephant,słoń,Polish,Masculine,słoń,0
+elephant,ελέφαντας,Greek,Masculine,ο ελέφαντας,0
+fox,fox,English,Non-Gendered,fox,11.11
+fox,renard,French,Varies,le/la renard/renarde,50
+fox,zorro,Spanish,Varies,el/la zorro/zorra,50
+fox,volpe,Italian,Feminine,la volpe,100
+fox,Fuchs,German,Varies,der/die Fuchs/Fähe,50
+fox,raposa,Portuguese,Feminine,a raposa,100
+fox,лиса,Russian,Feminine,-,100
+fox,ثعلب,Arabic,Masculine,ال ثعلب,0
+fox,लोमड़ी,Hindi,Feminine,-,100
+fox,lisa,Polish,Feminine,lisa,100
+fox,αλεπού,Greek,Feminine,η αλεπού,100
+wolf,wolf,English,Non-Gendered,wolf,10.00
+wolf,loup,French,Varies,le/la loup/louve,50
+wolf,lobo,Spanish,Varies,el/la lobo/loba,50
+wolf,lupo,Italian,Varies,il/la lupo/lupa,50
+wolf,Wolf,German,Varies,der/die Wolf/Wölfin,50
+wolf,lobo,Portuguese,Varies,o/a lobo/loba,50
+wolf,волк,Russian,Masculine,-,0
+wolf,ذئب,Arabic,Masculine,ال ذئب,0
+wolf,भेड़िया,Hindi,Masculine,-,0
+wolf,wilk,Polish,Varies,wilk/wilczyca,50
+wolf,λύκος,Greek,Masculine,ο λύκος,0
+frog,frog,English,Non-Gendered,frog,6.67
+frog,grenouille,French,Feminine,la grenouille,100
+frog,rana,Spanish,Feminine,la rana,100
+frog,rana,Italian,Feminine,la rana,100
+frog,Frosch,German,Masculine,der Frosch,0
+frog,rã,Portuguese,Feminine,a rã,100
+frog,лягушка,Russian,Feminine,-,100
+frog,ضفدع,Arabic,Masculine,ال ضفدع,0
+frog,मेंढक,Hindi,Masculine,-,0
+frog,żaba,Polish,Feminine,żaba,100
+frog,βάτραχος,Greek,Masculine,ο βάτραχος,0
+ladybug,ladybug,English,Non-Gendered,ladybug,75
+ladybug,coccinelle,French,Feminine,la coccinelle,100
+ladybug,mariquita,Spanish,Feminine,la mariquita,100
+ladybug,coccinella,Italian,Feminine,la coccinella,100
+ladybug,Marienkäfer,German,Masculine,der Marienkäfer,0
+ladybug,joaninha,Portuguese,Feminine,a joaninha,100
+ladybug,божья коровка,Russian,Feminine,-,100
+ladybug,خنفساء,Arabic,Feminine,ال خنفساء,100
+ladybug,लेडी बग,Hindi,Feminine,-,100
+ladybug,biedronka,Polish,Feminine,biedronka,100
+ladybug,πασχαλίτσα,Greek,Feminine,η πασχαλίτσα,100

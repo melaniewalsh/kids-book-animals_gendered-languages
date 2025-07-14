@@ -10,12 +10,25 @@
 	import DotPlot from "$components/DotPlot.svelte";
 	import Table from "$components/Table.svelte";
 	import Grid from "$components/Grid.svelte";
+	import DotPlotAll from "$components/DotPlotAll.svelte";
+	import DotPlotFilter from "$components/DotPlotFilter.svelte";
+
 	import { register } from "swiper/element/bundle";
 
 	const copy = getContext("copy");
 	const { body } = copy;
 	const { title, description, byline, others } = copy.meta;
-	const components = { Ul, Details, Swiper, DotPlot, Figure, Table, Grid };
+	const components = {
+		Ul,
+		Details,
+		Swiper,
+		DotPlot,
+		Figure,
+		Table,
+		Grid,
+		DotPlotAll,
+		DotPlotFilter
+	};
 	// const data = getContext("data");
 
 	onMount(() => {

@@ -25,7 +25,7 @@
 	--border-radius: 12px;
 	--font-body: var(--sans);
 	--font-form: var(--serif);
-	--color-bg: var(--color-yellow);
+	--color-bg: var(--color-blue-light);
 	--color-heading: var(--color-fg);
 	--color-fg: var(--color-gray-900);
 	--color-primary: var(--color-red);
@@ -77,7 +77,7 @@ h6 {
 }
 
 h1 {
-	font-size: var(--128px, 128px);
+	font-size: var(--110px, 110px);
 	line-height: 1;
 }
 

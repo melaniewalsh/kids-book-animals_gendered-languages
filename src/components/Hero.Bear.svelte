@@ -6,15 +6,19 @@
 	let interval;
 
 	const accessories = $derived([
-		{ id: "bowtie", top: "83%", width: 90 },
-		{ id: "lips", top: "74%", left: "50.8%", width: 40 },
-		{ id: "hair", top: "32%", left: "50.5%", width: 250 },
-		{ id: "glasses", top: "42%", left: "51%", width: 150 },
-		{ id: "mustache", top: "62%", left: "51%", width: 120 },
-		{ id: "tiara", top: "19%", left: "49%", width: 90 },
-		{ id: "cap", top: "12%" },
-		{ id: "tophat", top: "4%" },
-		{ id: "girl_glasses", top: "44%", left: "50.5%", width: 160 }
+		{ id: "la_rana", top: "93%", width: 150 },
+		{ id: "der_Frosch", top: "14%", left: "50.5%", width: 150 },
+		{ id: "german_flag", top: "93%", left: "50.8%", width: 90 },
+		{ id: "greek_flag", top: "14%", left: "50.5%", width: 90 },
+		{ id: "mexican_flag", top: "93%", width: 90 },
+		{ id: "spanish_flag", top: "14%", left: "50.5%", width: 90 }
+
+		// { id: "glasses", top: "42%", left: "51%", width: 150 },
+		// { id: "mustache", top: "62%", left: "51%", width: 120 },
+		// { id: "tiara", top: "19%", left: "49%", width: 90 },
+		// { id: "cap", top: "12%" },
+		// { id: "tophat", top: "4%" },
+		// { id: "girl_glasses", top: "44%", left: "50.5%", width: 160 }
 	]);
 
 	$effect(() => {
@@ -39,7 +43,7 @@
 </script>
 
 <div class="wrapper" class:ready={dimensions.width && dimensions.width > 0}>
-	<img class="bear" src="assets/hero/bear.png" alt="bear" />
+	<img class="bear" src="assets/animals2x/frog@2x.png" alt="frog" />
 
 	{#each accessories as { id, top, left, width }, i}
 		{@const active = i === currentIndex}

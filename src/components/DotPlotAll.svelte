@@ -7,6 +7,14 @@
 	import _ from "lodash";
 
 	const { id, title, sub, featured_animal } = $props();
+	let animalFilter = $state("");
+	let languageFilter = $state("");
+
+	// Filtering
+	const animals = $derived(() => _.uniq(booksData.map((d) => d.animal)).sort());
+	const languages = $derived(() =>
+		_.uniq(booksData.map((d) => d.Language)).sort()
+	);
 
 	const dataOptions = {
 		books: booksData,
@@ -25,10 +33,6 @@
 		bottom: 0
 	};
 
-	const groupedByAnimal = $derived(() => {
-		return groupBy(data, "animal");
-	});
-
 	let oneLine = id === "all";
 	let fullWidth = $state(0);
 	let chartWidth = $derived(fullWidth - margin.left - margin.right);
@@ -37,6 +41,14 @@
 	const xScale = $derived(
 		scaleLinear().domain([0, 100]).range([0, chartWidth])
 	);
+
+	const filteredData = $derived(() =>
+		booksData
+			.filter((d) => !animalFilter || d.animal === animalFilter)
+			.filter((d) => !languageFilter || d.Language === languageFilter)
+			.sort((a, b) => a.Language.localeCompare(b.Language))
+	);
+
 	// slight adjustment to make it more on the line — probably a better way to do this
 	const xGet = (d) => +d.proportion_female - 3;
 	const xAxisLabels = ["100%", "75%", "Equal", "75%", "100%"];
@@ -62,68 +74,100 @@
 	console.log("hoveredData", hoveredData);
 </script>
 
-{#if featured_animal}
-	<!-- show one animal -->
-	<figure id={`dot-plot-${id}-${featured_animal}`} class:one-line={oneLine}>
-		<h3>{title}</h3>
-		{#if sub}<p>{sub}</p>{/if}
+<h3>Explore All <br /> Animals and Languages</h3>
+<div class="description"></div>
 
-		<div class="inner">
-			<div
-				class="arrows"
-				style:margin-left={`${oneLine ? 0 : margin.left}px`}
-				style:width={oneLine ? "100%" : `${chartWidth}px`}
-			>
-				<div>MASCULINE</div>
-				<div>FEMININE</div>
-			</div>
+<div class="controls">
+	<label>
+		Animal:
+		<select bind:value={animalFilter}>
+			<option value="">All Animals</option>
+			{#each _.uniq(booksData.map((d) => d.animal)).sort() as animal}
+				<option value={animal}>
+					{_.upperFirst(animal)}
+				</option>
+			{/each}
+		</select>
+	</label>
 
-			<div class="rows" bind:clientWidth={fullWidth}>
-				<!-- alphabetize  -->
-				{#each booksData
-					.filter((d) => d.animal == featured_animal)
-					.sort((a, b) => a.Language.localeCompare(b.Language)) as d}
-					<div class="row">
-						<div class="label" style:width={`${labelWidth}px`}>
-							{d.Language}
-						</div>
-						<div class="line" class:english-line={d.Language === "English"}>
-							<div
-								id={`${d.animal}-${d.Language}`}
-								class="animal"
-								class:english-animal={d.Language === "English"}
-								style:left={`${xScale(xGet(d))}px`}
-								onmouseenter={onMouseEnter}
-								onmouseleave={() => {
-									if (selectedId === null) hoveredId = null;
-								}}
-							>
-								<img
-									src={`assets/animals2x/${d.animal}@2x.png`}
-									text={d.Translation}
-									alt="{d.animal} illustration"
-								/>
-							</div>
+	<label>
+		Language:
+		<select bind:value={languageFilter}>
+			<option value="">All Languages</option>
+			{#each _.uniq(booksData.map((d) => d.Language)).sort() as lang}
+				<option value={lang}>{lang}</option>
+			{/each}
+		</select>
+	</label>
+</div>
+
+<!-- show one animal -->
+<figure id={`dot-plot-id`} class:one-line={oneLine}>
+	<div class="inner">
+		<div
+			class="arrows"
+			style:margin-left={`${oneLine ? 0 : margin.left}px`}
+			style:width={oneLine ? "100%" : `${chartWidth}px`}
+		>
+			<div>MASCULINE</div>
+			<div>FEMININE</div>
+		</div>
+
+		<div class="rows" bind:clientWidth={fullWidth}>
+			<!-- alphabetize  -->
+			{#each booksData
+				.filter((d) => !animalFilter || d.animal === animalFilter)
+				.filter((d) => !languageFilter || d.Language === languageFilter)
+				.sort((a, b) => {
+					if (animalFilter) {
+						// User picked an animal — just sort by language
+						return a.Language.localeCompare(b.Language);
+					} else {
+						// No filter — sort by animal then language
+						const animalComp = a.animal.localeCompare(b.animal);
+						return animalComp !== 0 ? animalComp : a.Language.localeCompare(b.Language);
+					}
+				}) as d}
+				<div class="row">
+					<div class="label" style:width={`${labelWidth}px`}>
+						{d.Language}
+					</div>
+					<div class="line" class:english-line={d.Language === "English"}>
+						<div
+							id={`${d.animal}-${d.Language}`}
+							class="animal"
+							class:english-animal={d.Language === "English"}
+							style:left={`${xScale(xGet(d))}px`}
+							onmouseenter={onMouseEnter}
+							onmouseleave={() => {
+								if (selectedId === null) hoveredId = null;
+							}}
+						>
+							<img
+								src={`assets/animals2x/${d.animal}@2x.png`}
+								text={d.Translation}
+								alt="{d.animal} illustration"
+							/>
 						</div>
 					</div>
-				{/each}
-
-				<div
-					class="x-axis"
-					style:left={`${oneLine ? "0" : margin.left}px`}
-					style:width={`${oneLine ? "100%" : chartWidth + "px"}`}
-				>
-					{#each xAxisLabels as label}
-						<div class="marker">
-							<div class="vertical" class:equal={label === "Equal"} />
-							<div class="label">{label}</div>
-						</div>
-					{/each}
 				</div>
+			{/each}
+
+			<div
+				class="x-axis"
+				style:left={`${oneLine ? "0" : margin.left}px`}
+				style:width={`${oneLine ? "100%" : chartWidth + "px"}`}
+			>
+				{#each xAxisLabels as label}
+					<div class="marker">
+						<div class="vertical" class:equal={label === "Equal"} />
+						<div class="label">{label}</div>
+					</div>
+				{/each}
 			</div>
 		</div>
-	</figure>
-{/if}
+	</div>
+</figure>
 
 <div
 	class="tooltip"
@@ -142,6 +186,32 @@
 </div>
 
 <style>
+	.controls {
+		display: flex;
+		gap: 0.5rem;
+		/* justify-content: space-between; */
+		justify-content: center;
+		margin-top: 1rem;
+		flex-wrap: wrap;
+		margin-bottom: 2rem;
+		font-size: var(--20px);
+	}
+
+	.controls > div {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.controls > div:first-child {
+		flex: 1;
+	}
+
+	.controls > div:last-child {
+		display: flex;
+		flex-direction: column;
+		align-items: end;
+	}
+
 	.arrows {
 		font-size: var(--18px);
 		font-weight: bold;
