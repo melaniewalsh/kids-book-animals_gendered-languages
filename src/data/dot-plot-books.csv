@@ -1,4 +1,4 @@
-animal,Translation,Language,Gender,Name_with_Article,proportion_female,id
+animal,Translation,Language,Gender,Name_with_Article,proportion_female
 bird,bird,English,Non-Gendered,bird,62.50
 bird,oiseau,French,Masculine,le oiseau,0
 bird,pájaro,Spanish,Masculine,el pájaro,0

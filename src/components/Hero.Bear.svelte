@@ -7,9 +7,9 @@
 
 	const accessories = $derived([
 		{ id: "la_rana", top: "93%", width: 150 },
-		{ id: "der_Frosch", top: "14%", left: "50.5%", width: 150 },
-		{ id: "german_flag", top: "93%", left: "50.8%", width: 90 },
 		{ id: "greek_flag", top: "14%", left: "50.5%", width: 90 },
+		{ id: "german_flag", top: "93%", left: "50.8%", width: 90 },
+		{ id: "der_Frosch", top: "14%", left: "50.5%", width: 150 },
 		{ id: "mexican_flag", top: "93%", width: 90 },
 		{ id: "spanish_flag", top: "14%", left: "50.5%", width: 90 }
 

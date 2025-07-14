@@ -1,8 +1,5 @@
 <script>
 	import booksData from "$data/dot-plot-books.csv";
-	import surveyData from "$data/dot-plot-survey.csv";
-	import chatData from "$data/dot-plot-chat.csv";
-	import allData from "$data/dot-plot-all.csv";
 	import { scaleLinear } from "d3-scale";
 	import _ from "lodash";
 
@@ -16,14 +13,6 @@
 		_.uniq(booksData.map((d) => d.Language)).sort()
 	);
 
-	const dataOptions = {
-		books: booksData,
-		survey: surveyData,
-		chat: chatData,
-		all: allData
-	};
-
-	const data = dataOptions[id];
 	const labelWidth = 92;
 
 	const margin = {
@@ -42,6 +31,13 @@
 		scaleLinear().domain([0, 100]).range([0, chartWidth])
 	);
 
+	const Colors = {
+		Feminine: "var(--color-pink)",
+		Masculine: "var(--color-blue)",
+		Neuter: "var(--color-gray-200)",
+		Varies: "var(--color-gray-200)"
+	};
+
 	const filteredData = $derived(() =>
 		booksData
 			.filter((d) => !animalFilter || d.animal === animalFilter)
@@ -57,7 +53,7 @@
 	const onMouseEnter = (e) => {
 		// if (selectedId !== null) return;
 
-		hoveredId = e.target.id; // will now be something like "cat-German"
+		hoveredId = +e.target.id;
 		const rect = e.target.getBoundingClientRect();
 		const overHalfwayAcross = rect.left + rect.width > window.innerWidth / 2;
 		const x = rect.left + (overHalfwayAcross ? -200 : rect.width);
@@ -71,7 +67,12 @@
 		return booksData.find((d) => d.animal === animal && d.Language === lang);
 	});
 
-	console.log("hoveredData", hoveredData);
+	let tooltipData = $derived(() =>
+		booksData.map((d, i) => ({
+			...d,
+			id: i
+		}))
+	);
 </script>
 
 <h3>Explore All <br /> Animals and Languages</h3>
@@ -115,7 +116,7 @@
 
 		<div class="rows" bind:clientWidth={fullWidth}>
 			<!-- alphabetize  -->
-			{#each booksData
+			{#each tooltipData()
 				.filter((d) => !animalFilter || d.animal === animalFilter)
 				.filter((d) => !languageFilter || d.Language === languageFilter)
 				.sort((a, b) => {
@@ -134,7 +135,7 @@
 					</div>
 					<div class="line" class:english-line={d.Language === "English"}>
 						<div
-							id={`${d.animal}-${d.Language}`}
+							id={d.id}
 							class="animal"
 							class:english-animal={d.Language === "English"}
 							style:left={`${xScale(xGet(d))}px`}
@@ -174,10 +175,27 @@
 	class:visible={hoveredId !== null}
 	style="top: {tooltipCoords.y}px; left: {tooltipCoords.x}px;"
 >
-	<div>{hoveredId}</div>
-	<div>{hoveredData?.Translation}</div>
+	<div>
+		{tooltipData().find((d) => d.id === hoveredId)?.Language || "Not found"}
+	</div>
+	<div>
+		{tooltipData().find((d) => d.id === hoveredId)?.animal || "Not found"}
+	</div>
 
-	<span style:background="blue"> </span>
+	<div>
+		<i
+			>{tooltipData().find((d) => d.id === hoveredId)?.Name_with_Article ||
+				"Not found"}</i
+		>
+	</div>
+	<div
+		style:background={Colors[
+			tooltipData().find((d) => d.id === hoveredId)?.Gender
+		] || null}
+	>
+		{tooltipData().find((d) => d.id === hoveredId)?.Gender || "Not found"}
+	</div>
+
 	<!-- <a href={hoveredData?.goodreads_link} -->
 	<!-- target="_blank" -->
 	<!-- rel="noopener noreferrer" -->

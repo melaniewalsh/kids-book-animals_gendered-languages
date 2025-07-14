@@ -1,21 +1,10 @@
 <script>
 	import booksData from "$data/dot-plot-books.csv";
-	import surveyData from "$data/dot-plot-survey.csv";
-	import chatData from "$data/dot-plot-chat.csv";
-	import allData from "$data/dot-plot-all.csv";
 	import { scaleLinear } from "d3-scale";
 	import _ from "lodash";
 
 	const { id, title, sub, featured_animal } = $props();
 
-	const dataOptions = {
-		books: booksData,
-		survey: surveyData,
-		chat: chatData,
-		all: allData
-	};
-
-	const data = dataOptions[id];
 	const labelWidth = 92;
 
 	const margin = {
@@ -28,6 +17,13 @@
 	const groupedByAnimal = $derived(() => {
 		return groupBy(data, "animal");
 	});
+
+	const Colors = {
+		Feminine: "var(--color-pink)",
+		Masculine: "var(--color-blue)",
+		Neuter: "var(--color-gray-200)",
+		Varies: "var(--color-gray-200)"
+	};
 
 	let oneLine = id === "all";
 	let fullWidth = $state(0);
@@ -42,10 +38,11 @@
 	const xAxisLabels = ["100%", "75%", "Equal", "75%", "100%"];
 	let tooltipCoords = $state({ x: 0, y: 0 });
 	let hoveredId = $state(null);
+
 	const onMouseEnter = (e) => {
 		// if (selectedId !== null) return;
 
-		hoveredId = e.target.id; // will now be something like "cat-German"
+		hoveredId = +e.target.id;
 		const rect = e.target.getBoundingClientRect();
 		const overHalfwayAcross = rect.left + rect.width > window.innerWidth / 2;
 		const x = rect.left + (overHalfwayAcross ? -200 : rect.width);
@@ -53,87 +50,105 @@
 		tooltipCoords = { x, y };
 	};
 
-	const hoveredData = $derived(() => {
-		if (!hoveredId) return null;
-		const [animal, lang] = hoveredId.split("-");
-		return booksData.find((d) => d.animal === animal && d.Language === lang);
-	});
+	let tooltipData = $derived(() =>
+		booksData.map((d, i) => ({
+			...d,
+			id: i
+		}))
+	);
 
-	console.log("hoveredData", hoveredData);
+	let hoveredData = $derived(() => {
+		return tooltipData.find((d) => d.id === hoveredId);
+	});
 </script>
 
-{#if featured_animal}
-	<!-- show one animal -->
-	<figure id={`dot-plot-${id}-${featured_animal}`} class:one-line={oneLine}>
-		<h3>{title}</h3>
-		{#if sub}<p>{sub}</p>{/if}
+<!-- show one animal -->
+<figure id={`dot-plot-${id}-${featured_animal}`} class:one-line={oneLine}>
+	<h3>{title}</h3>
+	{#if sub}<p>{sub}</p>{/if}
 
-		<div class="inner">
-			<div
-				class="arrows"
-				style:margin-left={`${oneLine ? 0 : margin.left}px`}
-				style:width={oneLine ? "100%" : `${chartWidth}px`}
-			>
-				<div>MASCULINE</div>
-				<div>FEMININE</div>
-			</div>
+	<div class="inner">
+		<div
+			class="arrows"
+			style:margin-left={`${oneLine ? 0 : margin.left}px`}
+			style:width={oneLine ? "100%" : `${chartWidth}px`}
+		>
+			<div>MASCULINE</div>
+			<div>FEMININE</div>
+		</div>
 
-			<div class="rows" bind:clientWidth={fullWidth}>
-				<!-- alphabetize  -->
-				{#each booksData
-					.filter((d) => d.animal == featured_animal)
-					.sort((a, b) => a.Language.localeCompare(b.Language)) as d}
-					<div class="row">
-						<div class="label" style:width={`${labelWidth}px`}>
-							{d.Language}
-						</div>
-						<div class="line" class:english-line={d.Language === "English"}>
-							<div
-								id={`${d.animal}-${d.Language}`}
-								class="animal"
-								class:english-animal={d.Language === "English"}
-								style:left={`${xScale(xGet(d))}px`}
-								onmouseenter={onMouseEnter}
-								onmouseleave={() => {
-									if (selectedId === null) hoveredId = null;
-								}}
-							>
-								<img
-									src={`assets/animals2x/${d.animal}@2x.png`}
-									text={d.Translation}
-									alt="{d.animal} illustration"
-								/>
-							</div>
+		<div class="rows" bind:clientWidth={fullWidth}>
+			<!-- alphabetize  -->
+			{#each tooltipData()
+				.filter((d) => d.animal == featured_animal)
+				.sort((a, b) => a.Language.localeCompare(b.Language)) as d}
+				<div class="row">
+					<div class="label" style:width={`${labelWidth}px`}>
+						{d.Language}
+					</div>
+					<div class="line" class:english-line={d.Language === "English"}>
+						<div
+							id={d.id}
+							class="animal"
+							class:english-animal={d.Language === "English"}
+							style:left={`${xScale(xGet(d))}px`}
+							onmouseenter={onMouseEnter}
+							onmouseleave={() => {
+								if (selectedId === null) hoveredId = null;
+							}}
+						>
+							<img
+								src={`assets/animals2x/${d.animal}@2x.png`}
+								text={d.Translation}
+								alt="{d.animal} illustration"
+							/>
 						</div>
 					</div>
-				{/each}
-
-				<div
-					class="x-axis"
-					style:left={`${oneLine ? "0" : margin.left}px`}
-					style:width={`${oneLine ? "100%" : chartWidth + "px"}`}
-				>
-					{#each xAxisLabels as label}
-						<div class="marker">
-							<div class="vertical" class:equal={label === "Equal"} />
-							<div class="label">{label}</div>
-						</div>
-					{/each}
 				</div>
+			{/each}
+
+			<div
+				class="x-axis"
+				style:left={`${oneLine ? "0" : margin.left}px`}
+				style:width={`${oneLine ? "100%" : chartWidth + "px"}`}
+			>
+				{#each xAxisLabels as label}
+					<div class="marker">
+						<div class="vertical" class:equal={label === "Equal"} />
+						<div class="label">{label}</div>
+					</div>
+				{/each}
 			</div>
 		</div>
-	</figure>
-{/if}
+	</div>
+</figure>
 
 <div
 	class="tooltip"
 	class:visible={hoveredId !== null}
 	style="top: {tooltipCoords.y}px; left: {tooltipCoords.x}px;"
 >
-	<div>{hoveredId}</div>
-	<div>{hoveredData?.Translation}</div>
+	<div>
+		{tooltipData().find((d) => d.id === hoveredId)?.Language || "Not found"}
+	</div>
+	<div>
+		{tooltipData().find((d) => d.id === hoveredId)?.animal || "Not found"}
+	</div>
 
-	<span style:background="blue"> </span>
+	<div>
+		<i
+			>{tooltipData().find((d) => d.id === hoveredId)?.Name_with_Article ||
+				"Not found"}</i
+		>
+	</div>
+	<div
+		style:background={Colors[
+			tooltipData().find((d) => d.id === hoveredId)?.Gender
+		] || null}
+	>
+		{tooltipData().find((d) => d.id === hoveredId)?.Gender || "Not found"}
+	</div>
+
 	<!-- <a href={hoveredData?.goodreads_link} -->
 	<!-- target="_blank" -->
 	<!-- rel="noopener noreferrer" -->
