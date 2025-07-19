@@ -11,11 +11,11 @@
 <svelte:head>
 	<title>{title}</title>
 	<meta name="description" content={description} />
-	<meta name="author" content="The Pudding" />
+	<meta name="author" content="Melanie Walsh" />
 	<meta name="news_keywords" content={keywords} />
 
 	<meta property="og:title" content={title} />
-	<meta property="og:site_name" content="The Pudding" />
+	<meta property="og:site_name" content="Melanie Walsh" />
 	<meta property="og:url" content={url} />
 	<meta property="og:description" content={description} />
 	<meta property="og:type" content="article" />
@@ -28,7 +28,7 @@
 
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:site" content="https://pudding.cool" />
-	<meta name="twitter:creator" content="@puddingviz" />
+	<meta name="twitter:creator" content="@mellymeldubs" />
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:description" content={description} />
 	<meta name="twitter:image:src" content="{url}/assets/social.png" />

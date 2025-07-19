@@ -12,6 +12,7 @@
 	import Grid from "$components/Grid.svelte";
 	import DotPlotAll from "$components/DotPlotAll.svelte";
 	import DotPlotFilter from "$components/DotPlotFilter.svelte";
+	import BarPlot from "$components/BarPlot.svelte";
 
 	import { register } from "swiper/element/bundle";
 
@@ -27,7 +28,8 @@
 		Table,
 		Grid,
 		DotPlotAll,
-		DotPlotFilter
+		DotPlotFilter,
+		BarPlot
 	};
 	// const data = getContext("data");
 

@@ -5,7 +5,7 @@
 
 	const { id, title, sub, featured_animal } = $props();
 
-	const labelWidth = 92;
+	const labelWidth = 72;
 
 	const margin = {
 		left: labelWidth + 10,
@@ -27,15 +27,21 @@
 
 	let oneLine = id === "all";
 	let fullWidth = $state(0);
-	let chartWidth = $derived(fullWidth - margin.left - margin.right);
+	let chartWidth = $derived(
+		fullWidth - (margin.left + 10) - (margin.right + 10)
+	);
 	let selectedId = $state(null);
 
 	const xScale = $derived(
 		scaleLinear().domain([0, 100]).range([0, chartWidth])
 	);
 	// slight adjustment to make it more on the line — probably a better way to do this
-	const xGet = (d) => +d.proportion_female - 3;
-	const xAxisLabels = ["100%", "75%", "Equal", "75%", "100%"];
+	const xGet = (d) => {
+		const val = +d.proportion_female;
+		const offset = val === 0 ? -3 : val === 100 ? -3 : 0;
+		return val + offset;
+	};
+	const xAxisLabels = ["Masculine", "", "Neuter/Varies", "", "Feminine"];
 	let tooltipCoords = $state({ x: 0, y: 0 });
 	let hoveredId = $state(null);
 
@@ -60,6 +66,12 @@
 	let hoveredData = $derived(() => {
 		return tooltipData.find((d) => d.id === hoveredId);
 	});
+
+	let filteredData = $derived(
+		tooltipData()
+			.filter((d) => d.animal == featured_animal)
+			.sort((a, b) => a.Language.localeCompare(b.Language))
+	);
 </script>
 
 <!-- show one animal -->
@@ -73,44 +85,58 @@
 			style:margin-left={`${oneLine ? 0 : margin.left}px`}
 			style:width={oneLine ? "100%" : `${chartWidth}px`}
 		>
-			<div>MASCULINE</div>
-			<div>FEMININE</div>
+			<!-- <div>MASCULINE</div>
+			<div>FEMININE</div> -->
 		</div>
 
 		<div class="rows" bind:clientWidth={fullWidth}>
 			<!-- alphabetize  -->
-			{#each tooltipData()
-				.filter((d) => d.animal == featured_animal)
-				.sort((a, b) => a.Language.localeCompare(b.Language)) as d}
-				<div class="row">
-					<div class="label" style:width={`${labelWidth}px`}>
-						{d.Language}
-					</div>
-					<div class="line" class:english-line={d.Language === "English"}>
-						<div
-							id={d.id}
-							class="animal"
-							class:english-animal={d.Language === "English"}
-							style:left={`${xScale(xGet(d))}px`}
-							onmouseenter={onMouseEnter}
-							onmouseleave={() => {
-								if (selectedId === null) hoveredId = null;
-							}}
-						>
-							<img
-								src={`assets/animals2x/${d.animal}@2x.png`}
-								text={d.Translation}
-								alt="{d.animal} illustration"
-							/>
+			{#each filteredData as d}
+				{#if d.Language !== "Portuguese" && d.Language !== "French" && d.Language !== "Italian"}
+					{@const x = xGet(d)}
+
+					<!-- <div
+						class="x-axis"
+						style:left={`${margin.left}px`}
+						style:width={`${chartWidth + "px"}`}
+					>
+						{#each xAxisLabels as label}
+							<div class="marker">
+								<div class="vertical" class:equal={label === "Equal"} />
+								<div class="label">{label}</div>
+							</div>
+						{/each}
+					</div> -->
+					<div class="row">
+						<div class="label" style:width={`${labelWidth}px`}>
+							{d.Language}
+						</div>
+						<div class="line" class:english-line={d.Language === "English"}>
+							<div
+								id={d.id}
+								class="animal"
+								class:english-animal={d.Language === "English"}
+								style:left={`${xScale(xGet(d))}px`}
+								onmouseenter={onMouseEnter}
+								onmouseleave={() => {
+									if (selectedId === null) hoveredId = null;
+								}}
+							>
+								<img
+									src={`assets/animals2x/${d.animal}@2x.png`}
+									text={d.Translation}
+									alt="{d.animal} illustration"
+								/>
+							</div>
 						</div>
 					</div>
-				</div>
+				{/if}
 			{/each}
 
 			<div
 				class="x-axis"
-				style:left={`${oneLine ? "0" : margin.left}px`}
-				style:width={`${oneLine ? "100%" : chartWidth + "px"}`}
+				style:left={`${margin.left}px`}
+				style:width={`${chartWidth + "px"}`}
 			>
 				{#each xAxisLabels as label}
 					<div class="marker">
@@ -248,7 +274,7 @@
 	}
 
 	.label {
-		font-size: var(--18px);
+		font-size: var(--16px);
 		text-align: end;
 	}
 
@@ -273,6 +299,8 @@
 		transform: translate(-50%, 50%);
 		white-space: nowrap;
 		font-size: var(--14px);
+		bottom: 108%;
+		font-weight: bold;
 	}
 
 	.vertical {
@@ -363,7 +391,7 @@
 
 	.marker .vertical {
 		background: var(--color-fg); /* default fallback */
-		opacity: 0.5;
+		opacity: 0;
 		width: 1px;
 		height: 100%;
 	}

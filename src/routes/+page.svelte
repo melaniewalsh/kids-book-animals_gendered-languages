@@ -11,9 +11,9 @@
 	version();
 
 	const preloadFont = [
-		"https://pudding.cool/assets/fonts/bowlby-one-sc/bowlby-one-sc-v25-latin-regular.woff2",
-		"https://pudding.cool/assets/fonts/baloo-bhai/baloo-bhai-2-v28-latin-regular.woff2",
-		"https://pudding.cool/assets/fonts/baloo-bhai/baloo-bhai-2-v28-latin-700.woff2"
+		"https://fonts.gstatic.com/s/baloobhai2/v29/sZlDdRSL-z1VEWZ4YNA7Y5IHbd7nqn5wFOxu.woff2",
+		"https://fonts.gstatic.com/s/baloobhai2/v29/sZlDdRSL-z1VEWZ4YNA7Y5IHed7nqn5wFOxu.woff2",
+		"https://fonts.gstatic.com/s/fredoka/v16/X7n64b87HvSqjb_WIi2yDCRwoQ_k7367_DWs89XgHPyhRMw.woff2"
 	];
 
 	const { title, description, url, keywords } = copy.meta;
