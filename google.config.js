@@ -4,8 +4,8 @@ export default [
 		filepath: "src/data/copy.json"
 	},
 	{
-		id: "15e1oTExfURYCrc-VlewtTVEpxF4TtdQcF5oSKa6pZ6E",
-		filepath: "src/data/ladybug.csv",
-		gid: "1639533237"
+		id: "1V4en_tO7YcHnmxD_huXVn9mASI6SC-ofqb0lvwIJEvQ",
+		filepath: "src/data/animal-gender-languages.csv",
+		gid: "1880500390"
 	}
 ];

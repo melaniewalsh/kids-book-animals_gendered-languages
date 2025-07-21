@@ -1,16 +1,15 @@
 <script>
-	import Bear from "$components/Hero.Bear.svelte";
+	import Frog from "$components/Hero.Frog.svelte";
 	const { title, description, byline, others } = $props();
 </script>
 
 <section id="hero">
-	<Bear />
+	<Frog />
 
 	<div class="c">
 		<h1 class="text-outline">{title}</h1>
 		<p class="description">{description}</p>
 		<p class="byline">{@html byline}</p>
-		<p class="others">{@html others}</p>
 	</div>
 </section>
 
@@ -80,7 +79,7 @@
 
 	@media (max-width: 600px) {
 		h1 {
-			font-size: var(--64px);
+			font-size: var(--56px);
 		}
 
 		.description {

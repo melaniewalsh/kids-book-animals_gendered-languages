@@ -1,5 +1,5 @@
 <script>
-	import booksData from "$data/dot-plot-books.csv";
+	import animalgenderData from "$data/animal-gender-languages.csv";
 	import _ from "lodash";
 
 	const Colors = {
@@ -27,7 +27,7 @@
 	const { animalFilter, language1, language2 } = $props();
 
 	let tooltipData = $derived(() =>
-		booksData.map((d, i) => ({
+		animalgenderData.map((d, i) => ({
 			...d,
 			id: i,
 			Gender:

@@ -2,7 +2,7 @@
 	import Toggle from "$components/helpers/migrate/Toggle.svelte";
 	import BarPlot from "$components/BarPlot.svelte";
 
-	import booksData from "$data/dot-plot-books.csv";
+	import animalgenderData from "$data/animal-gender-languages.csv";
 	import { scaleLinear } from "d3-scale";
 	import _ from "lodash";
 
@@ -10,18 +10,21 @@
 	const languageColorMap = {
 		French: "var(--color-green)",
 		German: "var(--category-purple)",
-		English: "var(--color-blue-aaa)",
+		English: "var(--color-blue)",
 		Spanish: "var(--color-yellow)",
 		Italian: "var(--color-orange-light)",
 		Russian: "var(--category-red)",
 		Portuguese: "var(--category-cyan)",
 		Arabic: "var(--color-white)",
-		Hindi: "var(--color-pink-light)"
+		Hindi: "var(--color-pink-light)",
+		Greek: "var(--color-gray-200)",
+		Polish: "var(--color-green-bright)"
+
 		// Add more as needed...
 	};
 
 	let tooltipData = $derived(() =>
-		booksData.map((d, i) => ({
+		animalgenderData.map((d, i) => ({
 			...d,
 			id: i
 		}))
@@ -30,8 +33,12 @@
 	let languageFilter = $state("");
 
 	// Filtering
-	const animals = $derived(() => _.uniq(booksData.map((d) => d.animal)).sort());
-	const languages = $derived(_.uniq(booksData.map((d) => d.Language)).sort());
+	const animals = $derived(() =>
+		_.uniq(animalgenderData.map((d) => d.animal)).sort()
+	);
+	const languages = $derived(
+		_.uniq(animalgenderData.map((d) => d.Language)).sort()
+	);
 	let language1 = $state("French");
 	let language2 = $state("German");
 
@@ -39,13 +46,25 @@
 	// 	() => language1 && language2 && language1 !== language2
 	// );
 
-	const labelWidth = 92;
+	const labelWidth = 82;
 	let faceOffMode = $state("on");
 
 	let faceOffColors = $derived({
 		[language1]: "var(--color-green)",
 		[language2]: "var(--category-purple)"
 	});
+
+	function isOverlap(animal) {
+		const d1 = tooltipData().find(
+			(d) => d.animal === animal && d.Language === language1
+		);
+		const d2 = tooltipData().find(
+			(d) => d.animal === animal && d.Language === language2
+		);
+
+		if (!d1 || !d2) return false;
+		return xGet(d1) === xGet(d2);
+	}
 
 	const margin = {
 		left: labelWidth + 10,
@@ -56,9 +75,7 @@
 
 	let oneLine = id === "all";
 	let fullWidth = $state(0);
-	let chartWidth = $derived(
-		fullWidth - (margin.left + 10) - (margin.right + 10)
-	);
+	let chartWidth = $derived(fullWidth - (margin.left - margin.right));
 	let selectedId = $state(null);
 
 	const xScale = $derived(
@@ -73,7 +90,7 @@
 	};
 
 	// const filteredData = $derived(() =>
-	// 	booksData
+	// 	animalgenderData
 	// 		.filter((d) => !animalFilter || d.animal === animalFilter)
 	// 		.filter((d) => !languageFilter || d.Language === languageFilter)
 	// 		.sort((a, b) => a.Language.localeCompare(b.Language))
@@ -140,10 +157,13 @@
 	// );
 
 	// slight adjustment to make it more on the line — probably a better way to do this
-	const xGet = (d) => +d.proportion_female - 3;
-	// const xGet = (d) => +d.proportion_female - 3;
+	const xGet = (d) => {
+		const val = +d.proportion_female;
+		const offset = val === 0 ? 1.5 : val === 100 ? -3 : 0;
+		return val + offset;
+	}; // const xGet = (d) => +d.proportion_female - 3;
 
-	const xAxisLabels = ["", "", "", "", ""];
+	const xAxisLabels = ["Masculine", "", "Neuter/Varies", "", "Feminine"];
 	let tooltipCoords = $state({ x: 0, y: 0 });
 	let hoveredId = $state(null);
 	const onMouseEnter = (e) => {
@@ -160,155 +180,157 @@
 	const hoveredData = $derived(() => {
 		if (!hoveredId) return null;
 		const [animal, lang] = hoveredId.split("-");
-		return booksData.find((d) => d.animal === animal && d.Language === lang);
+		return animalgenderData.find(
+			(d) => d.animal === animal && d.Language === lang
+		);
 	});
 
-	function getConnectorStyle(animal) {
-		const entries = tooltipData().filter(
-			(d) =>
-				d.animal === animal &&
-				(d.Language === language1 || d.Language === language2)
-		);
+	// function getConnectorStyle(animal) {
+	// 	const entries = tooltipData().filter(
+	// 		(d) =>
+	// 			d.animal === animal &&
+	// 			(d.Language === language1 || d.Language === language2)
+	// 	);
 
-		if (entries.length < 2) return "";
+	// 	if (entries.length < 2) return "";
 
-		const entry1 = entries.find((e) => e.Language === language1);
-		const entry2 = entries.find((e) => e.Language === language2);
+	// 	const entry1 = entries.find((e) => e.Language === language1);
+	// 	const entry2 = entries.find((e) => e.Language === language2);
 
-		if (!entry1 || !entry2) return "";
+	// 	if (!entry1 || !entry2) return "";
 
-		// 🚫 Skip if proportions are equal (visually meaningless to connect)
-		if (+entry1.proportion_female === +entry2.proportion_female) return "";
+	// 	// 🚫 Skip if proportions are equal (visually meaningless to connect)
+	// 	if (+entry1.proportion_female === +entry2.proportion_female) return "";
 
-		const pos1 = xScale(xGet(entry1)) - 5;
-		const pos2 = xScale(xGet(entry2)) + 5;
+	// 	const pos1 = xScale(xGet(entry1)) - 100;
+	// 	const pos2 = xScale(xGet(entry2)) + 100;
 
-		if (Math.abs(pos1 - pos2) < 1) return "";
+	// 	if (Math.abs(pos1 - pos2) < 1) return "";
 
-		const left = Math.min(pos1, pos2) + 70;
-		const width = Math.abs(pos2 - pos1) - 80;
-		const direction = pos1 < pos2 ? "right" : "left";
+	// 	const left = Math.min(pos1, pos2) + 70;
+	// 	const width = Math.abs(pos2 - pos1) - 80;
+	// 	const direction = pos1 < pos2 ? "right" : "left";
 
-		return {
-			style: `left: ${left}px; right: ${left}px; width: ${width}px; top: 0px;`,
-			direction
-		};
-	}
+	// 	return {
+	// 		style: `left: ${left}px; right: ${left}px; width: ${width}px; top: 0px;`,
+	// 		direction
+	// 	};
+	// }
 
 	let selectedAnimal = $derived(() =>
 		animals().filter((a) => !animalFilter || a === animalFilter)
 	);
 </script>
 
-<div class="faceoff-header">
-	<h3>Explore All <br /> Animals and Languages</h3>
-</div>
-
 {#if faceOffMode == "on"}
 	<div class="controls">
-		<Toggle label="Face Off Mode" bind:value={faceOffMode} />
-
-		<label
-			>Animal:
-			<select bind:value={animalFilter}>
-				<option value="">All Animals</option>
-				{#each _.uniq(booksData.map((d) => d.animal)).sort() as animal}
-					<option value={animal}>
-						{_.upperFirst(animal)}
-					</option>
-				{/each}
-			</select>
-		</label>
-		<div class="language-filters">
-			<label>
-				Language 1:
-				<select bind:value={language1}>
-					<option value="">Choose Language</option>
-					{#each languages as lang}
-						<option value={lang}>{lang}</option>
-					{/each}
-				</select>
-			</label>
-
-			<label>
-				Language 2:
-				<select bind:value={language2}>
-					<option value="">Choose Language</option>
-					{#each languages as lang}
-						<option value={lang}>{lang}</option>
-					{/each}
-				</select>
-			</label>
+		<div>
+			<label for="toggle">Face-Off Mode</label>
+			<Toggle id="toggle" bind:value={faceOffMode} />
 		</div>
-	</div>
-{:else}
-	<div class="controls">
-		<Toggle label="Face Off Mode" bind:value={faceOffMode} />
-		<label>
-			Animal:
-			<select bind:value={animalFilter}>
+		<!-- <div class="dropdown-filters"> -->
+		<div>
+			<label for="animal-select">Filter by animal</label>
+			<select id="animal-select" bind:value={animalFilter}>
 				<option value="">All Animals</option>
-				{#each _.uniq(booksData.map((d) => d.animal)).sort() as animal}
+				{#each _.uniq(animalgenderData.map((d) => d.animal)).sort() as animal}
 					<option value={animal}>
 						{_.upperFirst(animal)}
 					</option>
 				{/each}
 			</select>
-		</label>
-		<label>
-			Language:
-			<select bind:value={languageFilter}>
-				<option value="">All Languages</option>
-				{#each _.uniq(booksData.map((d) => d.Language)).sort() as lang}
+		</div>
+		<!-- <div class="language-filters"> -->
+		<div>
+			<label for="lang1-select">Language 1</label>
+			<select id="lang1-select" bind:value={language1}>
+				<option value="">Choose Language</option>
+				{#each languages as lang}
 					<option value={lang}>{lang}</option>
 				{/each}
 			</select>
-		</label>
+
+			<label for="lang2-select">Language 2</label>
+			<select id="lang2-select" bind:value={language2}>
+				<option value="">Choose Language</option>
+				{#each languages as lang}
+					<option value={lang}>{lang}</option>
+				{/each}
+			</select>
+		</div>
+		<!-- </div>
+		</div> -->
+	</div>
+{:else}
+	<div class="controls">
+		<div>
+			<label for="toggle">Face Off Mode</label>
+			<Toggle id="toggle" bind:value={faceOffMode} />
+		</div>
+		<div>
+			<label for="animal-select">Filter by animal</label>
+			<select id="animal-select" bind:value={animalFilter}>
+				<option value="">All Animals</option>
+				{#each _.uniq(animalgenderData.map((d) => d.animal)).sort() as animal}
+					<option value={animal}>
+						{_.upperFirst(animal)}
+					</option>
+				{/each}
+			</select>
+		</div>
+		<div>
+			<label for="lang-select">Filter by language</label>
+			<select id="lang-select" bind:value={languageFilter}>
+				<option value="">All Languages</option>
+				{#each _.uniq(animalgenderData.map((d) => d.Language)).sort() as lang}
+					<option value={lang}>{lang}</option>
+				{/each}
+			</select>
+		</div>
 	</div>
 {/if}
 
 {#if faceOffMode === "on"}
 	<h3>
 		<span
-			style="text-decoration: underline; text-decoration-color: {languageColorMap[
-				language1
-			]};"
+			class="language-title"
+			style="background: {languageColorMap[language1]};"
 			>{language1 || "Language 1"}
 		</span>
 		vs.
 		<span
-			style="text-decoration: underline; text-decoration-color: {languageColorMap[
-				language2
-			]};">{language2 || "Language 2"}</span
+			class="language-title"
+			style="background: {languageColorMap[language2]}"
+			>{language2 || "Language 2"}</span
 		>
 	</h3>
 {/if}
 
-{#if faceOffMode === "on"}
+<!-- {#if faceOffMode === "on"}
 	<BarPlot {animalFilter} {language1} {language2} />
-{/if}
+{/if} -->
 
 <!-- show one animal -->
-<figure id={`dot-plot-id`} class:one-line={oneLine}>
+<figure id={`dot-plot-id`}>
 	<div class="inner">
 		<div
 			class="arrows"
 			style:margin-left={`${margin.left}px`}
 			style:width={`${chartWidth}px`}
-		>
-			<!-- <div>MASCULINE</div>
-			<div>FEMININE</div> -->
-		</div>
+		></div>
 
-		<div class="rows" bind:clientWidth={fullWidth}>
+		<div class="rows-faceoff" bind:clientWidth={fullWidth}>
 			<!-- alphabetize  -->
 			{#if faceOffMode === "on"}
 				{#key `${language1}-${language2}`}
 					{#each _.uniq(filteredFaceOffData.map((d) => d.animal)) as animal}
 						<div class="row">
 							<div class="label" style:width={`${labelWidth}px`}>
-								{_.upperFirst(animal)}
+								<span style:font-weight={isOverlap(animal) ? "normal" : "bold"}>
+									{_.upperFirst(animal)}
+								</span>
 							</div>
+
 							<div class="line">
 								{#each [language1, language2] as lang, i}
 									{#each tooltipData().filter((d) => d.animal === animal && d.Language === lang) as d}
@@ -317,22 +339,31 @@
 											class="animal-faceoff {lang === language2
 												? 'language2'
 												: ''}"
-											style:left={`${xScale(xGet(d)) + (i === 0 ? -20 : 20)}px`}
+											style:left={`${
+												xScale(xGet(d)) +
+												(isOverlap(animal) ? (i === 0 ? -15 : 15) : 0)
+											}px`}
 											style:background={languageColorMap[d.Language]}
 											onmouseenter={onMouseEnter}
 											onmouseleave={() => {
 												if (selectedId === null) hoveredId = null;
 											}}
 										>
-											<img
-												src={`assets/animals2x/${d.animal}@2x.png`}
-												alt="{d.animal} illustration"
-											/>
+											<a
+												href={`https://en.wiktionary.org/wiki/${d.Translation.split(" (")[0]}#${d.Language}`}
+												target="_blank"
+												rel="noopener noreferrer"
+											>
+												<img
+													src={`assets/animals2x/${d.animal}@2x.png`}
+													alt="{d.animal} illustration"
+												/>
+											</a>
 										</div>
 									{/each}
 								{/each}
 
-								{#if getConnectorStyle(animal)}
+								<!-- {#if getConnectorStyle(animal)}
 									{#key animal}
 										<div
 											class="faceoff-connector {getConnectorStyle(animal)
@@ -340,15 +371,31 @@
 											style={getConnectorStyle(animal).style}
 										/>
 									{/key}
-								{/if}
+								{/if} -->
 							</div>
 						</div>
 					{/each}
 				{/key}
+				<div
+					class="x-axis"
+					style:left={`${margin.left}px`}
+					style:width={`${chartWidth + "px"}`}
+				>
+					{#each xAxisLabels as label}
+						<div class="marker">
+							<div class="vertical" class:equal={label === "Equal"} />
+							<div class="label" class:one-animal={animalFilter}>{label}</div>
+						</div>
+					{/each}
+				</div>
 			{:else}
 				{#each filteredData as d}
 					<div class="row">
-						<div class="label" style:width={`${labelWidth}px`}>
+						<div
+							class="label"
+							style:width={`${labelWidth}px`}
+							class:portuguese-line={d.Language === "Portuguese"}
+						>
 							{d.Language}
 						</div>
 						<div class="line" class:english-line={d.Language === "English"}>
@@ -356,35 +403,52 @@
 								id={d.id}
 								class="animal"
 								class:english-animal={d.Language === "English"}
-								style:left={`${xScale(xGet(d))}px`}
+								style:left={`${
+									xScale(xGet(d)) +
+									(d.Language === "Portuguese" ? -11 : 0) +
+									(d.Gender === "Masculine"
+										? -15
+										: d.Gender === "Varies"
+											? -15
+											: d.Gender === "Neuter"
+												? -15
+												: 0)
+								}px`}
 								onmouseenter={onMouseEnter}
 								onmouseleave={() => {
 									if (selectedId === null) hoveredId = null;
 								}}
 							>
-								<img
-									src={`assets/animals2x/${d.animal}@2x.png`}
-									text={d.Translation}
-									alt="{d.animal} illustration"
-								/>
+								<a
+									href={`https://en.wiktionary.org/wiki/${d.Translation.split(" (")[0]}#${d.Language}`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									<img
+										src={`assets/animals2x/${d.animal}@2x.png`}
+										text={d.Translation}
+										alt="{d.animal} illustration"
+									/>
+								</a>
 							</div>
 						</div>
 					</div>
 				{/each}
+				<div
+					class="x-axis"
+					style:left={`${margin.left}px`}
+					style:width={`${chartWidth + "px"}`}
+				>
+					{#each xAxisLabels as label}
+						<div class="marker">
+							<div class="vertical" class:equal={label === "Equal"} />
+							<div class="label" class:one-animal-off={animalFilter}>
+								{label}
+							</div>
+						</div>
+					{/each}
+				</div>
 			{/if}
-
-			<div
-				class="x-axis"
-				style:left={`${oneLine ? "0" : margin.left}px`}
-				style:width={`${oneLine ? "100%" : chartWidth + "px"}`}
-			>
-				{#each xAxisLabels as label}
-					<div class="marker">
-						<div class="vertical" class:equal={label === "Equal"} />
-						<div class="label">{label}</div>
-					</div>
-				{/each}
-			</div>
 		</div>
 	</div>
 </figure>
@@ -405,15 +469,25 @@
 	</div>
 
 	<div>
-		<i
-			>{tooltipData().find((d) => d.id === hoveredId)?.Name_with_Article ||
-				"Not found"}</i
-		>
+		<i>
+			{(() => {
+				const entry = tooltipData().find((d) => d.id === hoveredId);
+				return entry
+					? entry.Name_with_Article === "-"
+						? entry.Translation
+						: entry.Name_with_Article
+					: "Not found";
+			})()}
+		</i>
 	</div>
 	<div
 		style:background={Colors[
 			tooltipData().find((d) => d.id === hoveredId)?.Gender
 		] || null}
+		style:font-size={tooltipData().find((d) => d.id === hoveredId)?.Language ===
+		"English"
+			? "1rem"
+			: undefined}
 	>
 		{tooltipData().find((d) => d.id === hoveredId)?.Gender || "Not found"}
 	</div>
@@ -430,23 +504,49 @@
 		/* position: absolute; */
 		font-size: var(--18px);
 	}
+
+	/* @media (max-width: 600px) {
+		.controls {
+			display: inline-grid;
+		}
+	} */
+	.dropdown-filters {
+		align-items: flex-start !important;
+		gap: 0.5rem;
+	}
+	.language-filters {
+		flex-direction: column;
+	}
+
+	select {
+		border: 4px solid black;
+	}
+
+	h3 {
+		text-align: center;
+	}
+
+	button,
+	select {
+		font-family: var(--sans);
+	}
+
+	.language-title {
+		display: inline-block;
+		padding: 0.25rem 0.5rem;
+		border-radius: 4px;
+		color: var(--color-fg);
+		font-weight: bold;
+		font-size: var(--36px);
+		margin: 0 0.5rem;
+	}
 	.controls {
 		display: flex;
 		gap: 0.5rem;
 		justify-content: space-between;
-		justify-content: center;
-		flex-direction: row; /* stack children vertically */
-		align-items: center;
-		margin-top: 1rem;
-		/* flex-wrap: wrap; */
+		flex-wrap: wrap;
 		margin-bottom: 2rem;
-		font-size: var(--18px);
-	}
-
-	@media (max-width: 600px) {
-		.controls {
-			display: inline-grid;
-		}
+		font-size: var(--20px);
 	}
 	.controls > div {
 		display: flex;
@@ -462,11 +562,10 @@
 		flex-direction: column;
 		align-items: end;
 	}
-
-	.fixed-toggle {
+	.controls > div:nth-last-child(2) {
 		display: flex;
-		justify-content: center;
-		margin-bottom: 1rem;
+		flex-direction: column;
+		align-items: end;
 	}
 
 	.animal-faceoff.language2 {
@@ -475,6 +574,12 @@
 		animation: fadeSlideIn 2s ease forwards;
 		animation-delay: 0.01s;
 		/* animation-timing-function: ease-in; */
+	}
+	.animal {
+		cursor: pointer;
+	}
+	.animal-faceoff {
+		cursor: pointer;
 	}
 
 	@keyframes fadeSlideIn {
@@ -522,6 +627,24 @@
 		margin-top: 1rem;
 	}
 
+	.rows-faceoff {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 22px;
+		margin-right: 4rem;
+		margin-top: 1rem;
+	}
+
+	/* .rows-faceoff {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 22px;
+		margin-right: 4rem;
+		margin-top: 1rem;
+	} */
+
 	.row {
 		position: relative;
 		display: flex;
@@ -544,6 +667,9 @@
 	.line {
 		position: relative;
 		width: 100%;
+	}
+	.portuguese-line {
+		width: 95px !important;
 	}
 
 	.line:before {
@@ -621,6 +747,7 @@
 	.label {
 		font-size: var(--18px);
 		text-align: end;
+		padding-right: 5px;
 	}
 
 	.animal-faceoff {
@@ -647,11 +774,34 @@
 		pointer-events: none;
 	}
 
-	.marker .label {
+	/* .marker .label {
 		position: absolute;
 		transform: translate(-50%, 50%);
 		white-space: nowrap;
 		font-size: var(--14px);
+		bottom: 104%;
+		font-weight: bold;
+	} */
+	.marker .label {
+		top: -2.5rem; /* or a calculated px value */
+		transform: translateX(-50%);
+		position: absolute;
+		white-space: nowrap;
+		font-size: var(--14px);
+		font-weight: bold;
+	}
+
+	.marker .label-off {
+		position: absolute;
+		transform: translate(-50%, 50%);
+		white-space: nowrap;
+		font-size: var(--14px);
+		bottom: 104.5%;
+		font-weight: bold;
+	}
+
+	.one-animal-off {
+		bottom: 108.5% !important;
 	}
 
 	.vertical {
@@ -665,6 +815,9 @@
 		background: var(--color-fg);
 		opacity: 0.5;
 		width: 2px;
+	}
+	.one-animal {
+		bottom: 183% !important;
 	}
 
 	figure {
@@ -775,4 +928,39 @@
 		border-top: 2px solid rgb(0, 0, 0);
 		opacity: 1;
 	} */
+
+	@media (max-width: 600px) {
+		h3 {
+			font-size: var(--22px);
+		}
+
+		.description {
+			flex-direction: column;
+			gap: 0;
+		}
+
+		.controls {
+			font-size: var(--18px);
+		}
+
+		.controls > div:first-child {
+			flex: none;
+			width: 100%;
+		}
+
+		.grid {
+			grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+			grid-auto-rows: 36px;
+		}
+
+		.animal {
+			margin: -8px;
+		}
+
+		.bar-segment:nth-of-type(1) .bar-label,
+		.bar-segment:nth-of-type(2) .bar-label {
+			transform: translate(0, 50%);
+			left: 6px;
+		}
+	}
 </style>

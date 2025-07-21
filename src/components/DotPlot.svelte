@@ -1,5 +1,5 @@
 <script>
-	import booksData from "$data/dot-plot-books.csv";
+	import animalgenderData from "$data/animal-gender-languages.csv";
 	import { scaleLinear } from "d3-scale";
 	import _ from "lodash";
 
@@ -38,7 +38,7 @@
 	// slight adjustment to make it more on the line — probably a better way to do this
 	const xGet = (d) => {
 		const val = +d.proportion_female;
-		const offset = val === 0 ? -3 : val === 100 ? -3 : 0;
+		const offset = val === 0 ? -3 : val === 100 ? -3 : val === 50 ? -3 : 0;
 		return val + offset;
 	};
 	const xAxisLabels = ["Masculine", "", "Neuter/Varies", "", "Feminine"];
@@ -57,7 +57,7 @@
 	};
 
 	let tooltipData = $derived(() =>
-		booksData.map((d, i) => ({
+		animalgenderData.map((d, i) => ({
 			...d,
 			id: i
 		}))
@@ -122,11 +122,17 @@
 									if (selectedId === null) hoveredId = null;
 								}}
 							>
-								<img
-									src={`assets/animals2x/${d.animal}@2x.png`}
-									text={d.Translation}
-									alt="{d.animal} illustration"
-								/>
+								<a
+									href={`https://en.wiktionary.org/wiki/${d.Translation.split(" (")[0]}#${d.Language}`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									<img
+										src={`assets/animals2x/${d.animal}@2x.png`}
+										text={d.Translation}
+										alt="{d.animal} illustration"
+									/>
+								</a>
 							</div>
 						</div>
 					</div>
@@ -174,6 +180,7 @@
 	>
 		{tooltipData().find((d) => d.id === hoveredId)?.Gender || "Not found"}
 	</div>
+	<div class="wiktionary-link">Click for Wiktionary entry</div>
 
 	<!-- <a href={hoveredData?.goodreads_link} -->
 	<!-- target="_blank" -->

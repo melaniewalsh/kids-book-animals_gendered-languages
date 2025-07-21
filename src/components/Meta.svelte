@@ -2,7 +2,7 @@
 	let {
 		title = "Title TK",
 		description = "Description TK",
-		url = "https://pudding.cool",
+		url = "https://melaniewalsh.github.io/animal-gender-languages",
 		keywords = "",
 		preloadFont = []
 	} = $props();
@@ -27,7 +27,7 @@
 	<meta property="og:image:height" content="628" />
 
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:site" content="https://pudding.cool" />
+	<meta name="twitter:site" content="https://x.com/mellymeldubs" />
 	<meta name="twitter:creator" content="@mellymeldubs" />
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:description" content={description} />
