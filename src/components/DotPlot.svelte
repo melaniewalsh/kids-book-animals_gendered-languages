@@ -272,11 +272,12 @@
 		line-height: 1;
 		box-shadow: none;
 		overflow: hidden;
+		z-index: 5;
 	}
 
 	.animal img {
 		width: 100%;
-		pointer-events: none;
+		pointer-events: auto;
 		filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.2));
 	}
 
@@ -290,7 +291,6 @@
 		top: 0;
 		line-height: 1;
 		transform: translate(0, -50%);
-		z-index: 2;
 	}
 
 	.x-axis {
